@@ -1,0 +1,90 @@
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+
+\title{Medical Insurance Cost Prediction}
+\author{End-to-End Machine Learning Pipeline}
+\date{ 2026-01-01 }
+
+\begin{document}
+\maketitle
+
+% =========================
+% Problem Overview
+% =========================
+\section*{Problem Overview}
+
+This report presents the results of an end-to-end machine learning pipeline
+developed to predict medical insurance costs based on personal and geographic
+attributes. The solution includes data ingestion, model training, evaluation,
+scoring, and automated reporting.
+
+% =========================
+% Dataset Overview
+% =========================
+\section*{Dataset Overview}
+
+\begin{itemize}
+    \item Number of samples: 1338
+    \item Target variable: Medical insurance charges
+    \item Features include demographic, health, and regional attributes
+\end{itemize}
+
+% =========================
+% Model Information
+% =========================
+\section*{Model Information}
+
+\begin{itemize}
+    \item Model type: DecisionTreeRegressor
+    \item Random state: 42
+    \item Training strategy: supervised regression
+\end{itemize}
+
+% =========================
+% Training Metrics
+% =========================
+\section*{Training Metrics}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{ ../training_results.png }
+\caption{Training metrics performance}
+\end{figure}
+
+% =========================
+% Validation Metrics
+% =========================
+\section*{Validation Metrics}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{ ../scoring_results.png }
+\caption{Validation metrics performance}
+\end{figure}
+
+% =========================
+% Predictions vs Actual. Solo agrego .png, es mas facil
+% =========================
+\section*{Predictions vs Actual Values}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{ ../scoring_comparation.png }
+\caption{Comparison between real and predicted insurance charges}
+\end{figure}
+
+% =========================
+% Final Evaluation
+% =========================
+\section*{Final Evaluation}
+
+The trained model was evaluated on a hold-out dataset generated through random
+sampling. The results demonstrate the model's ability to capture the underlying
+patterns in medical insurance costs while maintaining generalization performance.
+
+\end{document}

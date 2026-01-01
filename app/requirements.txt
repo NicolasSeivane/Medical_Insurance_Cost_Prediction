@@ -1,0 +1,7 @@
+pandas
+scikit-learn
+joblib
+psycopg2-binary
+matplotlib
+numpy
+jinja2
