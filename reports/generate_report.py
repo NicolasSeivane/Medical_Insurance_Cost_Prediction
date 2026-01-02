@@ -43,4 +43,3 @@ except Exception as e:
     print(f"📄 LaTeX source generated: {tex_path}")
 
 print(f"📄 Report generated: {tex_path}")
-

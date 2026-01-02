@@ -1,5 +1,7 @@
 FROM python:3.10-slim
 
+EXPOSE 8501
+
 WORKDIR /app
 
 # Instalar netcat, sed y pdflatex
@@ -24,7 +26,8 @@ WORKDIR /app/app
 # Corregir fines de línea CRLF -> LF para los scripts de bash
 RUN sed -i 's/\r$//' wait-for-postgres.sh && \
     sed -i 's/\r$//' run_pipeline.sh && \
-    chmod +x wait-for-postgres.sh run_pipeline.sh
+    sed -i 's/\r$//' run_interactive.sh && \
+    chmod +x wait-for-postgres.sh run_pipeline.sh run_interactive.sh
 
 # Crear carpetas de salida para persistencia
 RUN mkdir -p /app/reports/outputs /app/db /app/models && \

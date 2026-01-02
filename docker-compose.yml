@@ -13,6 +13,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  # Servicio 2: Pipeline y Dashboard Automático
   app:
     build:
       context: .
@@ -25,8 +26,30 @@ services:
       DB_NAME: mydatabase
       DB_USER: NicolasSeivane
       DB_PASS: Metlife2025
+    ports:
+      - "8502:8501" # Disponible en localhost:8502 después del pipeline
     volumes:
       - .:/app
+    command: [ "./run_interactive.sh" ]
+
+  # Servicio 3: Streamlit Dashboard Dedicado (Directo)
+  streamlit:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: mydatabase
+      DB_USER: NicolasSeivane
+      DB_PASS: Metlife2025
+    ports:
+      - "8501:8501" # Disponible siempre en localhost:8501
+    volumes:
+      - .:/app
+    command: [ "streamlit", "run", "../streamlit/streamlit_app.py", "--server.port", "8501", "--server.address", "0.0.0.0" ]
 
 volumes:
   postgres_data:

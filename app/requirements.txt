@@ -5,3 +5,5 @@ psycopg2-binary
 matplotlib
 numpy
 jinja2
+streamlit
+watchdog

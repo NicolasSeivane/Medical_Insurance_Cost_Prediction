@@ -2,58 +2,45 @@
 
 Este documento contiene los comandos esenciales para administrar el entorno de contenedores y ejecutar el pipeline de Machine Learning.
 
-## 1. Pipeline Completo (Recomendado)
+## 1. Arquitectura de 3 Servicios
 
-Para levantar la base de datos, entrenar el modelo, realizar el scoring y generar el reporte final:
+El sistema está diseñado para que todo funcione automáticamente:
+
+- **`db`**: Base de datos PostgreSQL.
+- **`app`**: Ejecuta el pipeline de entrenamiento/scoring y, al terminar, inicia automáticamente un dashboard en el puerto **8502**.
+- **`streamlit`**: Un dashboard dedicado que está disponible inmediatamente en el puerto **8501**.
 
 ```bash
-# Construir y levantar todo el sistema (primera vez o cambios en Dockerfile/requirements)
+# Levantar todo (DB, Pipeline y Dashboard)
 docker-compose up --build
-
-# Levantar normalmente (si ya está construido)
-docker-compose up
 ```
+
+Una vez que termine el pipeline en el contenedor `app`, tendrás dos formas de ver los resultados:
+1. **[http://localhost:8501](http://localhost:8501)**: Dashboard principal.
+2. **[http://localhost:8502](http://localhost:8502)**: Dashboard automático del pipeline.
+
+**Nota importante**: Usa siempre `localhost`. La dirección `0.0.0.0` que muestra Streamlit es interna del contenedor y no funcionará en el navegador de Windows.
 
 ---
 
-## 2. Ejecutar Scripts Individuales
-
-Si el contenedor ya está corriendo (vía `docker-compose up`), puedes ejecutar scripts específicos dentro del servicio `app`:
+## 2. Comandos Útiles
 
 ```bash
-# Ejecutar solo entrenamiento
-docker-compose exec app python training.py
+# Ver logs de todo para monitorear el progreso del pipeline
+docker-compose logs -f
 
-# Ejecutar solo scoring y reportes PNG
-docker-compose exec app python scoring.py
-
-# Generar el reporte PDF (LaTeX) explicitamente
-docker-compose exec app python ../reports/generate_report.py
-
-# Acceder a la consola interactiva (bash) del contenedor
-docker-compose exec app bash
-```
-
----
-
-## 3. Administración y Mantenimiento
-
-```bash
-# Apagar contenedores y limpiar recursos
-docker-compose down
-
-# Limpiar volúmenes (borra la base de datos de Postgres)
-docker-compose down -v
-
-# Ver logs del contenedor en tiempo real
+# Si solo quieres ver el progreso del entrenamiento:
 docker-compose logs -f app
+
+# Apagar y limpiar
+docker-compose down
 ```
 
 ---
 
-## 4. Estructura de Salida
-Los resultados aparecerán automáticamente en tu máquina en:
-- `db/schema.sql`: Esquema generado.
-- `reports/`: Imágenes PNG de resultados.
-- `reports/outputs/`: Reporte PDF final.
-- `models/`: Archivos .pkl del modelo entrenado.
+## 3. Estructura de Salida
+Los resultados se guardan permanentemente en:
+- `reports/figures/`: Imágenes del pipeline automático.
+- `reports/streamlit_figures/`: Imágenes generadas desde el Dashboard.
+- `reports/outputs/`: Reportes PDF.
+- `models/`: Modelos entrenados (.pkl).

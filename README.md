@@ -58,13 +58,16 @@ El objetivo de este proyecto es proporcionar una solución robusta y escalable p
 
 ```text
 ├── app/               # Source code (Training, Ingestion, Scoring)
+├── streamlit/         # Interactive Dashboard
 ├── data/              # Raw datasets (CSV)
 ├── db/                # SQL scripts and persisted schemas
 ├── models/            # Trained models (.pkl)
-├── reports/           # LaTeX templates and final PDF reports
-├── notebooks/         # Exploratory Data Analysis (EDA)
+├── reports/           # LaTeX templates and reports
+│   ├── figures/       # Pipeline manual figures
+│   ├── outputs/       # Pipeline manual PDF reports
+│   └── streamlit_figures/ # Dashboard specific figures
 ├── Dockerfile         # Container definition
-└── docker-compose.yml # Orchestration of app and database
+└── docker-compose.yml # Orchestration (DB, Pipeline, Dashboard)
 ```
 
 ## ⚙️ How to Run / Cómo Ejecutar
@@ -72,11 +75,17 @@ El objetivo de este proyecto es proporcionar una solución robusta y escalable p
 For detailed commands, please check the [DOCKER_GUIDE.md](./DOCKER_GUIDE.md).
 
 1. **Clone the repo.**
-2. **Execute the pipeline:**
+2. **Execute everything:**
    ```bash
    docker-compose up --build
    ```
+   - **Service `db`**: Starts the database.
+   - **Service `app`**: Runs the ML Pipeline automatically and then launches a Dashboard at [http://localhost:8502](http://localhost:8502).
+   - **Service `streamlit`**: Dedicated Dashboard available instantly at [http://localhost:8501](http://localhost:8501).
+
+> [!TIP]
+> Use **localhost** or **127.0.0.1** in your browser. Do not use 0.0.0.0.
+
 3. **Check results:**
-   - Reports in `reports/outputs/`
-   - SQL schema in `db/schema.sql`
-   - Models in `models/`
+   - Visual results in the Dashboard.
+   - Files in `reports/`, `models/` and `db/`.
