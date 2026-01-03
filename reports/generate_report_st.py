@@ -13,9 +13,10 @@ OUTPUT_DIR.mkdir(exist_ok=True)
 env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
 template = env.get_template("reports.tex.jinja")
 
-# Permitir pasar el nombre del modelo como argumento
+
 selected_model_name = sys.argv[1] if len(sys.argv) > 1 else "Model"
-# Limpiar el nombre si viene con .pkl para las rutas
+
+
 clean_name = selected_model_name.replace(".pkl", "")
 
 context = {
@@ -28,7 +29,8 @@ context = {
     "predictions_vs_actual_path": f"../streamlit_figures/scoring_comparation_{clean_name}.png",
 }
 
-# Verificar si los archivos existen (debug only)
+
+
 for key in ["training_metrics_path", "validation_metrics_path", "predictions_vs_actual_path"]:
     img_abs_path = (BASE_DIR / context[key]).resolve()
     if not img_abs_path.exists():

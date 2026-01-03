@@ -70,7 +70,7 @@ if menu == "Project Overview":
             "Nº of rows for Challenge Sample",1, 50, 10, 1
         )
 
-    # Tomar 10 filas aleatorias del dataset general
+
     challenge_sample = datos.sample(n=SAMPLE_SIZE_CHALLENGE, random_state=BASE_RANDOM_SEED)
     remaining_data = datos.drop(challenge_sample.index)
     st.markdown(f"### ⚡ Challenge Sample ({SAMPLE_SIZE_CHALLENGE} rows from dataset)")
@@ -111,31 +111,30 @@ if menu == "Project Overview":
     features = remaining_data.columns[:-1]
     objetive_feature = remaining_data.columns[-1]
 
-    # Split data dynamically según el slider
+    # NS: Split data dynamically
     x_train, y_train, x_val, y_val = train_test_split_custom(
         remaining_data, features, objetive_feature, test_size=sample_fraction, random_state=random_state
     )
 
-    # Construir dataframes completos con target
+    # NS: Create dataframes
     train_df = pd.concat([x_train, y_train], axis=1)
     val_df = pd.concat([x_val, y_val], axis=1)
 
-    # Seleccionar el dataset a mostrar
     if dataset_choice == "Training":
-        df_to_show = train_df.sample(frac=1.0, random_state=random_state)  # shuffle total
+        df_to_show = train_df.sample(frac=1.0, random_state=random_state)  
     elif dataset_choice == "Testing":
-        df_to_show = val_df.sample(frac=1.0, random_state=random_state)  # shuffle total
+        df_to_show = val_df.sample(frac=1.0, random_state=random_state) 
     else:
-        df_to_show = challenge_sample  # shuffle total
+        df_to_show = challenge_sample  
 
     # -------------------------
-    # Mostrar dataframe
+    # NS: Show dataframe
     # -------------------------
     st.markdown(f"### 🔍 {dataset_choice} Dataset (Sampled {len(df_to_show)} rows)")
     st.dataframe(df_to_show, use_container_width=True)
 
     # -------------------------
-    # Hacerlo global para usarlo en otra parte
+    # NS: Make it global to use it in other places
     # -------------------------
 
     grid_splits = {
@@ -170,7 +169,7 @@ elif menu == "Training":
         st.success(f"Selected model: {selected_model}")
 
     # -------------------------
-    # UI Controls (solo UI)
+    # UI Controls (only UI)
     # -------------------------
     st.divider()
 
@@ -193,7 +192,6 @@ elif menu == "Training":
         "k_folds": k_folds
         }
 
-        # LinearRegression NO usa random_state
         st.info("Linear Regression has no hyperparameters.")
 
     if selected_model == "Polynomial Regression":
@@ -311,7 +309,7 @@ elif menu == "Training":
     st.divider()
 
     # -------------------------
-    # Acción de entrenamiento
+    # Training action
     # -------------------------
     model_name = st.text_input("Model Name for Saving", value=f"{selected_model.replace(' ', '_')}_model")
 
@@ -325,13 +323,7 @@ elif menu == "Training":
             objetive_feature = st.session_state["train_df"].columns[-1]
 
 
-            # 👉 Llamar a tu función de entrenamiento
-            # Ejemplo de placeholder:
-            # model, metrics = train_model_from_ui(data=datos, features=features, target=target,
-            #                                     model_type=selected_model, params=params)
-            #
-            # save_model(model, model_name)
-            # st.write(metrics)
+
             model, metrics = train_model_from_ui(
                 df=st.session_state["remaining_data"],
                 features=features,
@@ -358,7 +350,7 @@ elif menu == "Training":
             st.warning("No parameters found for the selected model.")
 
 # ============================================================
-# 3️⃣ Model Selection
+#  Model Selection
 # ============================================================
 
 elif menu == "Model Selection":
@@ -378,11 +370,8 @@ elif menu == "Model Selection":
 
             st.session_state["model"] = selected_model
 
-            # 👉 Guardar en session_state
-            # st.session_state["model_name"] = selected_model
-
 # ============================================================
-# 4️⃣ Prediction
+# Prediction
 # ============================================================
 
 elif menu == "Prediction":
@@ -396,15 +385,14 @@ elif menu == "Prediction":
 
     if model_name is None:
         st.warning("⚠️ Please select a trained model first in **Model Selection**.")
-        st.stop()  # ⛔ corta la ejecución acá, no hay errores
+        st.stop()  
     
-    # Si llegó acá, HAY modelo
     st.subheader(f"✅ Current model selected: `{model_name}`")
 
     st.divider()
 
     # -------------------------
-    # Opción 2: Input manual
+    # Opción : Manual Input
     # -------------------------
 
     st.subheader("Manual Input")
@@ -474,7 +462,7 @@ elif menu == "Prediction":
     )
 
     # ------------------------------------------------------------
-    # Acción de validación
+    # Validation action
     # ------------------------------------------------------------
 
     challenge_data = st.session_state["challenge_sample"]
@@ -484,12 +472,7 @@ elif menu == "Prediction":
 
 
     if st.button("🧪 Run Validation"):
-        # 👉 TU FUNCIÓN
-        # metrics = validate_model(
-        #     model_name=model_name,
-        #     metric=validation_metric
-        # )
-        # st.session_state["validation_metrics"] = metrics
+
 
         clean_model_name = model_name.replace(".pkl", "")
 
@@ -506,14 +489,13 @@ elif menu == "Prediction":
 
 
     # ------------------------------------------------------------
-    # Resultados de validación (persistentes)
+    # Validation results
     # ------------------------------------------------------------
         if st.session_state["validation_metrics"] is not None:
 
             st.markdown("### 📊 Validation Results")
 
-            # 👉 Puede ser dict, dataframe, etc.
-            # Ejemplo visual:
+      
             st.dataframe(st.session_state["validation_metrics"], use_container_width=True)
 
             st.markdown("### 🔍 Validation Predictions Sample")
@@ -521,14 +503,10 @@ elif menu == "Prediction":
             st.dataframe(st.session_state["validation_pred"], use_container_width=True)
 
 
-                # 👉 ACÁ:
-                # df_preds = get_validation_predictions(...)
-                # st.dataframe(df_preds, use_container_width=True)
-
 
             pass
 # ============================================================
-# 5️⃣ Reports
+# Reports
 # ============================================================
 
 elif menu == "Reports":
@@ -536,10 +514,8 @@ elif menu == "Reports":
 
     st.markdown("Generated figures and PDF reports from experiments.")
 
-    # 1. Option to Generate PDF Report
     st.subheader("🛠️ Report Management")
     
-    # Let user select which model to generate report for
     pkl_models = [m.name for m in MODELS_DIR.glob("*.pkl")]
     if pkl_models:
         selected_rep_model = st.selectbox("Select model for PDF report", pkl_models, key="rep_model_sel")
@@ -548,9 +524,8 @@ elif menu == "Reports":
         if st.button("📄 Generate PDF Report"):
             with st.spinner(f"Generating report for {clean_rep_name}..."):
                 try:
-                    # Llama al script de generación de reportes
-                    # Necesitamos pasarle el contexto al script o modificarlo para que sea flexible.
-                    # Por ahora, ejecutamos el script existente.
+ 
+
                     script_path = BASE_DIR / "reports" / "generate_report_st.py"
                     import subprocess
                     result = subprocess.run(["python", str(script_path), clean_rep_name], capture_output=True, text=True, cwd=str(BASE_DIR / "reports"))
@@ -563,17 +538,18 @@ elif menu == "Reports":
 
     st.divider()
 
-    # 2. Display Figures
+    # Display Figures
     figures = list((REPORTS_DIR / "streamlit_figures").glob("*.png"))
     if figures:
         st.subheader("📊 Figures")
+
         # Filter figures by selected model if possible, or just show all
         cols = st.columns(2)
         for i, fig in enumerate(figures):
             with cols[i % 2]:
                 st.image(str(fig), caption=fig.name, use_container_width=True)
 
-    # 3. Display and Download PDFs
+    # Display and Download PDFs
     pdfs = list((REPORTS_DIR / "outputs").glob("*.pdf"))
     if pdfs:
         st.subheader("📥 PDF Reports")

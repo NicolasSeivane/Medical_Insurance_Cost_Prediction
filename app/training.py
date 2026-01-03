@@ -20,9 +20,9 @@ if __name__ == "__main__":
         "y_test": y_test
     }
 
-    k_folds = 5 ## Choose the folds to cross validation.
+    k_folds = 5 ## NS: Choose the folds to cross validation.
 
-    ## All the scoring functions that are used.
+    ## NS: All the scoring functions that are used.
     scoring_funcs = {
         "training_time" : 0,
         "prediction_time" : 0,
@@ -34,7 +34,7 @@ if __name__ == "__main__":
         "mean_absolute_percentage_error" : 0
     }
 
-    ## The grid for regressor tree, feel free to add the vales that you want, check the skitlearn documentation not to choose a wrong value.
+    ## NS: The grid for regressor tree, feel free to add the vales that you want, check the skitlearn documentation not to choose a wrong value.
     grid_regresor_tree = {
         "boosting_model__criterion": ["squared_error", "friedman_mse", "absolute_error"], 
         "boosting_model__splitter": ["best", "random"],
@@ -57,7 +57,6 @@ if __name__ == "__main__":
     resultados_limpios = {}
     for k, v in resultados.items():
         if isinstance(v, dict):
-            # Convertir los tiempos a segundos (si no lo están) y redondear a 4 decimales
             v["training_time"] = round(float(v.get("training_time", 0)), 4)
             v["prediction_time"] = round(float(v.get("prediction_time", 0)), 4)
             resultados_limpios[k] = v

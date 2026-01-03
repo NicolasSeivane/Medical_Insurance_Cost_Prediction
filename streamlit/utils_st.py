@@ -26,14 +26,14 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-# Definición centralizada de rutas
+# NS: Define path to files.
 BASE_DIR = Path(__file__).resolve().parent.parent
 REPORTS_DIR = BASE_DIR / "reports"
 MODELS_DIR = BASE_DIR / "models"
 DATA_DIR = BASE_DIR / "data"
 
 
-# Asegurar que existan los directorios
+# NS: Create the dir if they dont exist.
 for d in [REPORTS_DIR, MODELS_DIR, DATA_DIR]:
     d.mkdir(exist_ok=True)
 
@@ -182,7 +182,6 @@ def polynomial_regression_grid_search(grid_split, grid, features, objetive_featu
     x_test = grid_split["x_test"]
     y_test = grid_split["y_test"]
 
-    # Crear el pipeline con estandarización y características polinómicas
     categorical_features, numeric_features = categorical_and_numerical(x_train, features)
 
     preprocessor = ColumnTransformer(
@@ -225,7 +224,7 @@ def boosting_regression_training_grid_search(grid_split, grid, features, objetiv
 
     preprocessor = ColumnTransformer(
     transformers=[
-        #("num", StandardScaler(), numeric_features),
+        #("num", StandardScaler(), numeric_features), NS: This model dont requiere SatandarScale. 
                 ("num", "passthrough", numeric_features),
 
         ("cat", OneHotEncoder(handle_unknown="ignore"), categorical_features)
@@ -263,7 +262,7 @@ def decision_tree_regression_training_grid_search(grid_split, grid, features, ob
 
     preprocessor = ColumnTransformer(
     transformers=[
-        #("num", StandardScaler(), numeric_features),
+        #("num", StandardScaler(), numeric_features), NS: This model dont requiere SatandarScale. 
         ("num", "passthrough", numeric_features),
         ("cat", OneHotEncoder(handle_unknown="ignore"), categorical_features)
     ]
@@ -311,7 +310,7 @@ def train_model_from_ui(df, features, target, model_type, params, k_folds, grid_
 
 
 def dataframe_to_png(df, output_path, title="Data Report", dpi=200):
-    # Si el dataframe es muy largo (ej: el de comparación), tomamos las primeras 20 filas.
+    # NS: Choose the first 20 rows, it can be changed, be wary of the png
     if len(df) > 20:
         df_preview = df.head(20).copy()
         title = f"{title} (First 20 rows)"
@@ -332,7 +331,6 @@ def dataframe_to_png(df, output_path, title="Data Report", dpi=200):
     table.set_fontsize(9)
     table.scale(1.2, 1.8)
 
-    # Estilo del header
     for (row, col), cell in table.get_celld().items():
         if row == 0:
             cell.set_text_props(weight="bold", color="white")
@@ -342,7 +340,7 @@ def dataframe_to_png(df, output_path, title="Data Report", dpi=200):
     plt.tight_layout()
 
     output_image_path = REPORTS_DIR / "streamlit_figures" / f"{output_path}"
-    output_image_path.parent.mkdir(exist_ok=True, parents=True) # Ensure figures dir exists
+    output_image_path.parent.mkdir(exist_ok=True, parents=True) 
     plt.savefig(output_image_path, dpi=dpi, bbox_inches="tight")
     plt.close()
 
@@ -357,7 +355,9 @@ def metrics_to_pdf(metrics:dict, model_name: str):
     resultados_limpios = {}
     for k, v in resultados.items():
         if isinstance(v, dict):
-            # Convertir los tiempos a segundos (si no lo están) y redondear a 4 decimales
+
+            # NS: Time to seconds
+
             v["training_time"] = round(float(v.get("training_time", 0)), 4)
             v["prediction_time"] = round(float(v.get("prediction_time", 0)), 4)
             resultados_limpios[k] = v
@@ -369,7 +369,7 @@ def metrics_to_pdf(metrics:dict, model_name: str):
     else:
         
         for model_name, metrics_dict in resultados_limpios.items():
-            # Clean model name for filename
+            # NS: Clean model name so they don´t have second extension.
             clean_name = model_name.replace(".pkl", "")
             df_model = pd.DataFrame(
                 metrics_dict.items(),

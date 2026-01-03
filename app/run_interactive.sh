@@ -3,10 +3,10 @@
 
 set -e
 
-# Esperar a que la base de datos esté lista
+# NS: Wait until the db is ready
 ./wait-for-postgres.sh db 5432
 
-# Ejecutar el pipeline normal
+# NS: Run the main pipeline
 ./run_pipeline.sh
 
 echo ""
@@ -16,7 +16,6 @@ echo "🚀 Iniciando dashboard de Streamlit..."
 echo "----------------------------------------------------------"
 echo ""
 
-# Iniciar Streamlit (sin preguntar)
-# El puerto se puede configurar vía comandos o env var, pero acá lo dejamos por defecto
-# para que el docker-compose lo mapee.
+# NS: Start streamlit without question, port can be changed here
+
 streamlit run ../streamlit/streamlit_app.py --server.port 8501 --server.address 0.0.0.0

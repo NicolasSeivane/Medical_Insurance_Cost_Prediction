@@ -3,13 +3,12 @@
 
 set -e
 
-# Esperar a que la base de datos esté lista
+# NS: Wait until db is ready
 ./wait-for-postgres.sh db 5432
 
 echo "🚀 Iniciando pipeline de ML..."
 
-# create_database.py ya no se ejecuta al ser importado gracias al bloque __main__
-# Lo corremos una vez explícitamente para asegurar que la DB esté lista y con datos.
+
 echo "📦 Paso 1: Configurando base de datos..."
 python create_database.py
 

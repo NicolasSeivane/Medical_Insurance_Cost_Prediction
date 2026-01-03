@@ -10,7 +10,7 @@ cmd="$@"
 
 echo "Esperando a que PostgreSQL esté listo en $host:$port ..."
 
-# Loop hasta que postgres responda
+# NS: Loop until db is ready
 until nc -z "$host" "$port"; do
   echo "PostgreSQL no está listo, esperando..."
   sleep 1

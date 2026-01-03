@@ -28,13 +28,13 @@ from pathlib import Path
 
 GLOBAL_SEED = 50
 
-# Definición centralizada de rutas
+# NS: Define path to files
 BASE_DIR = Path(__file__).resolve().parent.parent
 REPORTS_DIR = BASE_DIR / "reports"
 DB_DIR = BASE_DIR / "db"
 MODELS_DIR = BASE_DIR / "models"
 
-# Asegurar que existan los directorios
+# ns: Create dir if they dont exist 
 for d in [REPORTS_DIR, DB_DIR, MODELS_DIR]:
     d.mkdir(exist_ok=True)
 
@@ -94,16 +94,18 @@ def create_table_query(df, table_name, conn, drop_if_exists=False):
 def insert_data_from_df(df, table_name, conn, val = None):
     cursor = conn.cursor()
     if val is not None:
-        rows_to_insert = df.sample(n=val, random_state=GLOBAL_SEED)  # Seleccionar 'val' filas aleatorias
+        rows_to_insert = df.sample(n=val, random_state=GLOBAL_SEED)  # NS: Choose the validation rows 
     else:
         rows_to_insert = df
 
 
 
-    for index, row in rows_to_insert.iterrows(): ## Separa el index y los row (Series) de cada fila para hacer la query.
-            placeholders = ', '.join(['%s'] * len(row)) # Crea una cadena con tantos '%s' como columnas tiene la fila, separados por coma.
+    for index, row in rows_to_insert.iterrows(): 
+            
+            placeholders = ', '.join(['%s'] * len(row)) # NS: This way we respect the type of data, and we don´t insert a wrong type. 
             insert_query = f"INSERT INTO {table_name} VALUES ({placeholders})"
-            cursor.execute(insert_query, tuple(row)) ## Aca reemplaza los '%s' por los valores de la fila.
+
+            cursor.execute(insert_query, tuple(row)) ## NS: This is where we replacae  the %s with our values.
         
     conn.commit()
     cursor.close()
@@ -286,7 +288,7 @@ def decision_tree_regression_training_grid_search(grid_split, grid, features, ob
 def save_model(model, model_name, base_dir=None):
     model_path = MODELS_DIR / f"{model_name}.pkl"
 
-    # Save the model
+    # NS: We save the model
     joblib.dump(model, model_path)
 
     print(f"Modelo guardado en: {model_path}")
@@ -356,7 +358,6 @@ def validation_test(val_data, model, features, objetive_feature):
 
 
 def dataframe_to_png(df, output_path, title="Data Report", dpi=200):
-    # Si el dataframe es muy largo (ej: el de comparación), tomamos las primeras 20 filas.
     if len(df) > 20:
         df_preview = df.head(20).copy()
         title = f"{title} (First 20 rows)"
@@ -377,7 +378,6 @@ def dataframe_to_png(df, output_path, title="Data Report", dpi=200):
     table.set_fontsize(9)
     table.scale(1.2, 1.8)
 
-    # Estilo del header
     for (row, col), cell in table.get_celld().items():
         if row == 0:
             cell.set_text_props(weight="bold", color="white")
